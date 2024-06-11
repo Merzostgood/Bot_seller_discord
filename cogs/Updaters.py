@@ -1,11 +1,17 @@
 import discord, sys
 from datetime import datetime
 sys.path.append("..")
-from cogs.db import reader
+from cogs.db import reader, JSONUpdate
 
-async def changeProductCart(msg, interaction):
+async def newUser(ctx):
+    database = await reader()
+    database[str(ctx.guild.id)]["cart"][str(ctx.author.id)] = {}
+    await JSONUpdate(database)
+
+async def changeProductCart(interaction):
     database = await reader()
     ctx = interaction.user
+    msg = await interaction.original_response()
 
     AllCost = 0
     cart = ""
@@ -46,8 +52,9 @@ async def changeProductCart(msg, interaction):
                          icon_url="https://cdn.discordapp.com/avatars/1198958063206539285/84ce6a1cd45596afc80656e6c5bfbb46.webp?size=128")
         await msg.edit(embed=embed)
 
-async def changeProduct(nowid, msg, interaction):
+async def changeProduct(nowid, interaction):
     database = await reader()
+    msg = await interaction.original_response()
     guild = interaction.user.guild.id
     embed = discord.Embed(
         title=f"Товар - {database[str(guild)]['products'][nowid][0]} [{nowid + 1}/{len(database[str(guild)]['products'])}]",

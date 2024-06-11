@@ -5,17 +5,17 @@ from cogs.db import reader, JSONUpdate
 from cogs.Updaters import changeProduct
 
 class ProductsView(discord.ui.View):
-    def __init__(self, nowid, msg):
+    def __init__(self, nowid):
         super().__init__(timeout=9999999)
         self.nowid = nowid
-        self.msg = msg
 
     @discord.ui.button(row=0, emoji="◀", custom_id="prev", style=discord.ButtonStyle.secondary)
     async def first_button_callback(self, button, interaction):
         await interaction.response.defer()
+        msg = await interaction.original_response()
         if self.nowid > 0:
             self.nowid -= 1
-            await changeProduct(self.nowid, self.msg, interaction)
+            await changeProduct(self.nowid, interaction)
 
     @discord.ui.button(label="  Добавить в корзину  ", emoji="🛒", custom_id="buy", row=0, style=discord.ButtonStyle.green)
     async def buy_callback(self, button, interaction):
@@ -25,9 +25,10 @@ class ProductsView(discord.ui.View):
     async def last_button_callback(self, button, interaction):
         database = await reader()
         await interaction.response.defer()
+        msg = await interaction.original_response()
         if len(database[str(interaction.user.guild.id)]) > self.nowid:
             self.nowid += 1
-            await changeProduct(self.nowid, self.msg, interaction)
+            await changeProduct(self.nowid, interaction)
 
 
 class Amount(discord.ui.Modal):
