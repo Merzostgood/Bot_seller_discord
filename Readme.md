@@ -3,10 +3,16 @@
 ## This bot is only for selling things etc. For game currency in Minecraft on the [Frogdream server](https://discord.gg/frogdream-999660962598625300).
 ## Warning ❗❗❗ Products are displayed only on a specific discord server where the bot is located. If you like the idea, a new bot will be released where the products will be the same and you will be able to display your products yourself ❤
 ## Coming soon...
- - Adding your products
+ - Adding your products - In next update
  - Rich Presence
  - Description of commands
  - Ability to add to the server yourself
+ - Requirements.txt file - In next update
+
+## In next update v0.4
+
+ - Requirements.txt file
+ - Adding your products
  # Changes
 ## v0.3
 - Fixed more bugs
