@@ -1,9 +1,9 @@
 import discord, sys, random, string, time
 from datetime import datetime
 sys.path.append("..")
-from cogs.db import reader, JSONUpdate
+from cogs.Db import reader, JSONUpdate
 from cogs.Updaters import changeProductCart
-from cogs.purchases import msg_purs
+from cogs.Purchases import msg_purs
 
 class DeleteAll(discord.ui.View):
     def __init__(self):
@@ -71,8 +71,6 @@ class CartView(discord.ui.View):
                              icon_url="https://cdn.discordapp.com/avatars/1198958063206539285/84ce6a1cd45596afc80656e6c5bfbb46.webp?size=128")
 
             await interaction.respond(embed=embed, ephemeral=True, delete_after=10)
-
-
 
 class ModalCart(discord.ui.Modal):
     def __init__(self, interaction, *args, **kwargs) -> None:
@@ -173,7 +171,6 @@ class BuyMenu(discord.ui.View):
         msg = await interaction.original_response()
         await msg.edit(view=CartView())
         await changeProductCart(interaction)
-
 
 async def oplata(interaction, cost):
     msg = await interaction.original_response()

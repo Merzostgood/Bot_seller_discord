@@ -1,7 +1,7 @@
 import discord, sys
 from datetime import datetime
 sys.path.append("..")
-from cogs.db import reader, JSONUpdate
+from cogs.Db import reader, JSONUpdate
 from cogs.Updaters import changeProduct
 
 class ProductsView(discord.ui.View):
@@ -29,7 +29,6 @@ class ProductsView(discord.ui.View):
         if len(database[str(interaction.user.guild.id)]) > self.nowid:
             self.nowid += 1
             await changeProduct(self.nowid, interaction)
-
 
 class Amount(discord.ui.Modal):
     def __init__(self, nowid, *args, **kwargs) -> None:

@@ -1,7 +1,7 @@
-import discord, sys, time
+import discord, sys
 from datetime import datetime
 sys.path.append("..")
-from cogs.db import reader, JSONUpdate
+from cogs.Db import reader, JSONUpdate
 
 async def msg_purs(interaction, channel):
     database = await reader()
@@ -45,8 +45,7 @@ async def msg_purs(interaction, channel):
     database[str(interaction.user.guild.id)]["settings"]["channels"] += 1
     await JSONUpdate(database)
 
-    msg = await channekl.send(f"||{role.mention},{interaction.user.mention}||", embed=embed, view=Zakaz())
-
+    await channekl.send(f"||{role.mention},{interaction.user.mention}||", embed=embed, view=Zakaz())
 
 class Zakaz(discord.ui.View):
     def __init__(self):
@@ -58,34 +57,27 @@ class Zakaz(discord.ui.View):
 
         await interaction.response.defer()
         msg = await interaction.original_response()
-        channel = discord.utils.get(interaction.guild.channels,
-                                    id=msg.channel.id)
-        if channel.category.id == database[str(interaction.user.guild.id)]["settings"]["categoryLog"]:
-            button.disabled = True
-            await msg.edit(view=self)
-        else:
-            role = discord.utils.get(interaction.guild.roles,
+        role = discord.utils.get(interaction.guild.roles,
                                  id=database[str(interaction.guild.id)]["settings"]['sellerRole'])
-            if role in interaction.user.roles:
-                embed = discord.Embed(title="Вы уверены что хотите удалить тикет?",
+        if role in interaction.user.roles:
+            embed = discord.Embed(title="Вы уверены что хотите удалить тикет?",
                                   colour=0xf50000)
-                embed.set_footer(text="By real. bot",
+            embed.set_footer(text="By real. bot",
                              icon_url="https://cdn.discordapp.com/avatars/1198958063206539285/84ce6a1cd45596afc80656e6c5bfbb46.webp?size=128")
-                await interaction.respond(embed=embed, ephemeral=True, view=YeNo())
-
+            await interaction.respond(embed=embed, ephemeral=True, view=YeNo(msg))
 
 class YeNo(discord.ui.View):
-    def __init__(self):
+    def __init__(self, msg):
         super().__init__(timeout=9999999)
+        self.msg = msg
 
     @discord.ui.button(label="  Да ✅  ", row=0, style=discord.ButtonStyle.green)
     async def thgf_button_callback(self, button, interaction):
         await interaction.response.defer()
-        msg = await interaction.original_response()
         database = await reader()
         channel = discord.utils.get(interaction.guild.channels,
-                                    id=msg.channel.id)
-        if database[str(interaction.user.guild.id)]["settings"]["log"] == 1:
+                                    id=self.msg.channel.id)
+        if database[str(interaction.user.guild.id)]["settings"]["log"] == "Yes":
             category = discord.utils.get(interaction.guild.categories,
                                         id=database[str(interaction.user.guild.id)]["settings"]["categoryLog"])
 
@@ -94,14 +86,32 @@ class YeNo(discord.ui.View):
                     pass
                 else:
                     await channel.set_permissions(key, overwrite=None)
+            await self.msg.edit(view=RemoveChannel())
             await channel.edit(category=category,
                                reason="Закрытие тикета")
         else:
+            for key, value in channel.overwrites.items():
+                if key == interaction.guild.default_role:
+                    pass
+                else:
+                    await channel.set_permissions(key, overwrite=None)
+
             await channel.delete(reason="Закрытие тикета без включенных логов")
-        await msg.edit(delete_after=0.00001)
 
     @discord.ui.button(label="  Нет ❌  ", row=0, style=discord.ButtonStyle.red)
     async def fdst_button_callback(self, button, interaction):
         await interaction.response.defer()
         msg = await interaction.original_response()
         await msg.edit(delete_after=0.00001)
+
+class RemoveChannel(discord.ui.View):
+    def __init__(self):
+        super().__init__(timeout=None)
+
+    @discord.ui.button(label="  Удалить канал  ", custom_id="remove", emoji='❌', row=0, style=discord.ButtonStyle.red)
+    async def removel_callback(self, button, interaction):
+        await interaction.response.defer()
+        msg = await interaction.original_response()
+        channel = discord.utils.get(interaction.guild.channels,
+                                    id=msg.channel.id)
+        await channel.delete(reason="Окончательное удаление канала")

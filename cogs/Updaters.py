@@ -1,7 +1,7 @@
 import discord, sys
 from datetime import datetime
 sys.path.append("..")
-from cogs.db import reader, JSONUpdate
+from cogs.Db import reader, JSONUpdate
 
 async def newUser(ctx):
     database = await reader()
