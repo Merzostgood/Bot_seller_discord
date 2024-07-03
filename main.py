@@ -1,29 +1,92 @@
 from datetime import datetime
 from conf import TOKEN
-from cogs.db import reader, JSONUpdate
+from cogs.Db import reader, JSONUpdate
 from cogs.Cart import CartView
 from cogs.Products import ProductsView
 from cogs.Updaters import newUser
-from cogs.purchases import Zakaz
+from cogs.Purchases import Zakaz, RemoveChannel
+from cogs.ProductManager import Sure, Edit, products_list
+from discord import Option
 import discord
-bot = discord.Bot(debug_guilds=[1168481058031931422,1216358724961177630])
 
+bot = discord.Bot(debug_guilds=[1168481058031931422,1216358724961177630])
+databaseBackup = {"1168481058031931422": {"products": [["Товар", "Описание", 32, "https://cdn.discordapp.com/avatars/1198958063206539285/84ce6a1cd45596afc80656e6c5bfbb46.webp?size=128"]],"cart": {},"settings": {"categoryid": 1243523202253062166,'sellerRole': 1242428174483062875,"categoryLog": 1249732902095159469,"channels": 1,"log": 1}}}
+product = discord.SlashCommandGroup("product", "Math related commands", default_member_permissions=discord.Permissions(administrator=True))
 
 @bot.event
 async def on_ready():
-    print("Satrt")
-    database = await reader()
     bot.add_view(Zakaz())
-
+    bot.add_view(RemoveChannel())
 
 # COMMANDS
+@product.command()
+async def add(ctx: discord.ApplicationContext,
+                      name: Option(str, required=True, max_length=32),
+                      description: Option(str, required=True, max_length=128),
+                      price: Option(int, required=True, max_value=1728),
+                      image: Option(discord.Attachment, required=True)):
+    await ctx.response.defer()
+    whitelist = ['image/webp', 'image/jpeg', 'image/gif', 'image/png']
+    if image.content_type in whitelist:
+        embed = discord.Embed(
+            title=f"**Пример как будет выглядить товар : **\nТовар - {name}",
+            colour=0xadff5c,
+            timestamp=datetime.now())
+        embed.add_field(name="",
+                        value=description,
+                        inline=False)
+        embed.add_field(name=f"Цена - {price} алмазов",
+                        value="",
+                        inline=False)
+        embed.set_image(
+            url=image.url)
+        embed.set_footer(text="By Real bot",
+                         icon_url="https://cdn.discordapp.com/avatars/1198958063206539285/84ce6a1cd45596afc80656e6c5bfbb46.webp?size=128")
+        await ctx.respond(embed=embed, view=Sure([name, description, price, image.url]), ephemeral=True, delete_after=600)
+    else:
+        pass
 
-@bot.slash_command()
-@discord.default_permissions(
-    administrator=True
-)
-async def product_add(ctx: discord.ApplicationContext):
-    await ctx.respond(f"Hello {ctx.author}, you are an administrator.")
+@product.command()
+async def remove(ctx: discord.ApplicationContext,
+                 product_user: discord.Option(str, autocomplete=discord.utils.basic_autocomplete(products_list))):
+    await ctx.response.defer()
+    database = await reader()
+    for product in database[str(ctx.guild.id)]["products"]:
+        if product[0] == product_user:
+            database[str(ctx.guild.id)]["products"].remove(product)
+            await JSONUpdate(database)
+            embed = discord.Embed(description=f"",
+                                  colour=0x9ff500,
+                                  timestamp=datetime.now())
+            embed.set_author(name="✅ Успех!")
+            embed.set_footer(text="By real. bot",
+                             icon_url="https://cdn.discordapp.com/avatars/1198958063206539285/84ce6a1cd45596afc80656e6c5bfbb46.webp?size=128")
+            await ctx.respond(embed=embed, delete_after=15, ephemeral=True)
+
+@product.command()
+async def edit(ctx: discord.ApplicationContext,
+                 product_user: discord.Option(str, autocomplete=discord.utils.basic_autocomplete(products_list))):
+    await ctx.response.defer()
+    database = await reader()
+    for product in database[str(ctx.guild.id)]["products"]:
+        if product[0] == product_user:
+            guild = ctx.guild.id
+            embed = discord.Embed(
+                title=f"**Пример как будет выглядить товар : **\nТовар - {database[str(guild)]['products'][0][0]}",
+                colour=0xadff5c,
+                timestamp=datetime.now())
+            embed.add_field(name="",
+                            value=database[str(guild)]["products"][0][1],
+                            inline=False)
+            embed.add_field(name=f"Цена - {database[str(guild)]['products'][0][2]} алмазов",
+                            value="",
+                            inline=False)
+            embed.set_image(
+                url=database[str(guild)]["products"][0][3])
+            embed.set_footer(text="By Real bot",
+                             icon_url="https://cdn.discordapp.com/avatars/1198958063206539285/84ce6a1cd45596afc80656e6c5bfbb46.webp?size=128")
+
+            await ctx.respond(embed=embed, view=Edit(), ephemeral=True, delete_after=600)
 
 @bot.slash_command()
 async def products(ctx: discord.ApplicationContext):
@@ -52,8 +115,6 @@ async def products(ctx: discord.ApplicationContext):
                      icon_url="https://cdn.discordapp.com/avatars/1198958063206539285/84ce6a1cd45596afc80656e6c5bfbb46.webp?size=128")
 
     await ctx.respond(embed=embed, view=ProductsView(0), ephemeral=True)
-
-
 
 @bot.slash_command()
 async def cart(ctx: discord.ApplicationContext):
@@ -107,4 +168,5 @@ async def cart(ctx: discord.ApplicationContext):
 
         await ctx.respond(embed=embed, view=CartView(), ephemeral=True, delete_after=600)
 
+bot.add_application_command(product)
 bot.run(TOKEN)
