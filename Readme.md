@@ -2,8 +2,6 @@
   
 ![GitHub Real bot seller](https://cdn.discordapp.com/attachments/1226424309514240000/1250076359959777352/github.png?ex=66699fd5&is=66684e55&hm=ea77b125e8d079375762aaf047889d00b5b94acfeb273e66c8b2c6fd0577982f&)    
 # Real discord bot for sell (Server) v0.4.1 // No more update because soon there will be an official online store on the Frogdream website.  
-# Coming soon...  
- - None
 # Changes
 ## v0.4.1
  - Now you can download project.
