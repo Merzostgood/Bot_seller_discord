@@ -9,8 +9,7 @@ from cogs.ProductManager import Sure, Edit, products_list
 from discord import Option
 import discord
 
-bot = discord.Bot(debug_guilds=[1168481058031931422,1216358724961177630])
-databaseBackup = {"1168481058031931422": {"products": [["Товар", "Описание", 32, "https://cdn.discordapp.com/avatars/1198958063206539285/84ce6a1cd45596afc80656e6c5bfbb46.webp?size=128"]],"cart": {},"settings": {"categoryid": 1243523202253062166,'sellerRole': 1242428174483062875,"categoryLog": 1249732902095159469,"channels": 1,"log": 1}}}
+bot = discord.Bot(debug_guilds=["Your guild id here"])
 product = discord.SlashCommandGroup("product", "Math related commands", default_member_permissions=discord.Permissions(administrator=True))
 
 @bot.event
