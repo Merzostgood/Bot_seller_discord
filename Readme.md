@@ -1,17 +1,13 @@
 
   
 ![GitHub Real bot seller](https://cdn.discordapp.com/attachments/1226424309514240000/1250076359959777352/github.png?ex=66699fd5&is=66684e55&hm=ea77b125e8d079375762aaf047889d00b5b94acfeb273e66c8b2c6fd0577982f&)    
-# ✝ Real discord bot for sell (Server) v0.4 ✝ ## This bot is only for selling things etc. For game currency in Minecraft on the [Frogdream server](https://discord.gg/frogdream-999660962598625300).  
+# Real discord bot for sell (Server) v0.4.1 // No more update because soon there will be an official online store on the Frogdream website.  
 # Coming soon...  
- - Rich Presence - In next update    
- - Description of commands    
- - Ability to add to the server yourself  
- - Database structure / example - In next update    
-# In next update v0.5  
- - Database structure / example  
- - Rich Presence  
-# Changes    
-## v0.4  
+ - None
+# Changes
+## v0.4.1
+ - Now you can download project.
+## v0.4
  - Adding, edit and remove your products  
  - Requirements.txt file
  - Fixed mini bugs
